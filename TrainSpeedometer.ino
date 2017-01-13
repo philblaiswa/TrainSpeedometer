@@ -25,11 +25,11 @@ void displayStateName(SpeedoState state);
 
 volatile SpeedoState g_state = waitingForFirstSensor;
 volatile SpeedoState g_previousState = Unknown;
-volatile int lastTriggeredSensor = -1;
+volatile int g_lastTriggeredSensor = -1;
 
-volatile double matrixSpeed = 10000.0; // Invalid, will print dashes
+volatile double g_matrixSpeed = 10000.0; // Invalid, will print dashes
 
-Adafruit_7segment matrix = Adafruit_7segment();
+Adafruit_7segment g_matrix = Adafruit_7segment();
 
 volatile IRSensorPinInfo g_sensorPins[2] =
 {
@@ -45,8 +45,8 @@ void setup()
 {
 	Serial.begin(9600);
 
-	matrix.begin(0x70);
-	Serial.println("Attached LED matrix");
+	g_matrix.begin(0x70);
+	Serial.println("Attached LED g_matrix");
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -78,22 +78,22 @@ void loop()
 		switch (g_state)
 		{
 		case waitingForFirstSensor:
-			Serial.println(matrixSpeed);
-			matrix.printFloat(matrixSpeed, 2, DEC); // Invalid, prints dashes
-			matrix.writeDisplay();
+			Serial.println(g_matrixSpeed);
+			g_matrix.printFloat(g_matrixSpeed, 2, DEC); // Invalid, prints dashes
+			g_matrix.writeDisplay();
 			break;
 
 		case waitingForSecondSensor:
-			matrix.writeDigitNum(0, 0);
-			matrix.writeDigitNum(1, 0);
-			matrix.writeDigitNum(3, 0);
-			matrix.writeDigitNum(4, 0);
-			matrix.writeDisplay();
+			g_matrix.writeDigitNum(0, 0);
+			g_matrix.writeDigitNum(1, 0);
+			g_matrix.writeDigitNum(3, 0);
+			g_matrix.writeDigitNum(4, 0);
+			g_matrix.writeDisplay();
 			break;
 
 		case showSpeed:
 			displaySpeed();
-			lastTriggeredSensor = -1;
+			g_lastTriggeredSensor = -1;
 			g_state = waitingForFirstSensor;
 			break;
 		}
@@ -107,10 +107,10 @@ void handleIRSensor(int sensorPin)
 	unsigned long timeSinceLastBreak = currentTime - g_sensorPins[sensorPin].lastInterruptTime;
 
 	if ((timeSinceLastBreak > 5000) &&
-		(lastTriggeredSensor != sensorPin) &&
+		(g_lastTriggeredSensor != sensorPin) &&
 		((g_state == waitingForFirstSensor) || (g_state == waitingForSecondSensor))) {
 		handleIRSensor(sensorPin);
-		lastTriggeredSensor = sensorPin;
+		g_lastTriggeredSensor = sensorPin;
 
 		g_sensorPins[sensorPin].interruptTime = millis();
 		switch (g_state)
@@ -161,7 +161,7 @@ void displaySpeed()
 	double speedMilesPerHour = speedInchPerSecond * 0.0568181818;
 	double speedNScale = speedMilesPerHour * 160.0;
 
-	matrixSpeed = speedNScale;
+	g_matrixSpeed = speedNScale;
 
 	Serial.println("*******************************************");
 	Serial.print("Start time: ");
