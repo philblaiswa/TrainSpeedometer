@@ -65,6 +65,17 @@ void setup()
 
 void loop()
 {
+    unsigned long lastTime = 0;
+    unsigned long currentTime = millis();
+
+    if ((currentTime - lastTime) > 2000) {
+        Serial.println(lastTime);
+        lastTime = currentTime;
+        //Serial.print("*** STATE: ");
+        //displayStateName(g_previousState);
+        //Serial.println();
+    }
+
 	if (g_previousState != g_state)
 	{
 		Serial.print("Old state: ");
@@ -108,12 +119,12 @@ void handleIRSensor(int sensorPin)
 
 	if ((timeSinceLastBreak > 5000) &&
 		(g_lastTriggeredSensor != sensorPin) &&
-		((g_state == waitingForFirstSensor) || (g_state == waitingForSecondSensor))) {
-		handleIRSensor(sensorPin);
+		((g_state == waitingForFirstSensor) || (g_state == waitingForSecondSensor))) 
+    {
 		g_lastTriggeredSensor = sensorPin;
-
 		g_sensorPins[sensorPin].interruptTime = millis();
-		switch (g_state)
+		
+        switch (g_state)
 		{
 		case waitingForFirstSensor:
 			g_state = waitingForSecondSensor;
