@@ -6,7 +6,6 @@ typedef struct
 {
 	int digitalPin;
 	unsigned long interruptTime;
-	unsigned long lastInterruptTime;
 	InterruptFunction interruptFunction;
 } IRSensorPinInfo;
 
