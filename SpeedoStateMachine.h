@@ -1,9 +1,7 @@
 #pragma once
 
-enum SpeedoState
-{
-	Unknown = 0,
-	waitingForFirstSensor,
-	waitingForSecondSensor,
-	showSpeed
-};
+#define SPEEDOSTATE_UNKNOWN               0
+#define SPEEDOSTATE_WAITING_FIRST_SENSOR  1
+#define SPEEDOSTATE_WAITING_SECOND_SENSOR 2
+#define SPEEDOSTATE_SHOW_SPEED            3
+#define SPEEDOSTATE_COOLOFF               4
